@@ -2,7 +2,8 @@ package com.gym_management.notification_service.config;
 
 import com.gym_management.notification_service.dto.MembershipEventDto;
 import com.gym_management.notification_service.service.MembershipNotificationConsumer;
-import com.gym_management.notification_service.service.impl.MembershipNotificationConsumerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
@@ -13,6 +14,8 @@ import java.util.function.Function;
 @Configuration
 public class MembershipNotificationConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(MembershipNotificationConfig.class);
+
     private final MembershipNotificationConsumer notificationConsumer;
 
     public MembershipNotificationConfig(MembershipNotificationConsumer notificationConsumer) {
@@ -22,8 +25,9 @@ public class MembershipNotificationConfig {
     @Bean
     public Function<Flux<MembershipEventDto>, Mono<Void>> processMembershipEvent() {
         return eventFlux -> eventFlux
-                .doOnNext(event -> System.out.println("Received event: " + event))
+                .doOnNext(event -> log.info("Received event: {}", event))
                 .flatMap(notificationConsumer::handleMembershipEvent)
+                .onErrorContinue((error, event) -> log.error("Error processing event: {}", error.getMessage()))
                 .then();
     }
 }
