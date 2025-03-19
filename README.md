@@ -64,7 +64,7 @@ spring.mail.properties.mail.smtp.starttls.required=true
 ```
 #### Important ####
 
-The **SMTP_USERNAME* and **SMTP_PASSWORD** environment variables must be configured before running the application.
+The **SMTP_USERNAME** and **SMTP_PASSWORD** environment variables must be configured before running the application.
 These values can be securely stored in:
 
 - GitHub Secrets for secure CI/CD integration.
